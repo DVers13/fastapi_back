@@ -5,8 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
 from laboratory.models import laboratory, discipline
 from laboratory.schemas import LaboratoryCreate, DisciplineCreate
-from auth.models import User
+from auth.models import User, group, role
 from auth.base_config import check_permissions, current_user
+
 
 router = APIRouter(
     prefix="/laboratory",
@@ -16,6 +17,7 @@ router = APIRouter(
 @router.get("/authenticated-route")
 async def authenticated_route(user: User = Depends(current_user)):
     return {"message": f"Hello {user}!"}
+
 
 @router.get("/", dependencies=[Depends(check_permissions(["read"]))])
 async def get_laboratory_by_id(laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
