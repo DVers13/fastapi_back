@@ -12,14 +12,14 @@ router = APIRouter(
     tags=["Group and Role"]
 )
 
-@router.post("/")
+@router.post("/add_group")
 async def add_group(new_group: GroupCreate, session: AsyncSession = Depends(get_async_session)):
     stmt = insert(group).values(**new_group.dict())
     await session.execute(stmt)
     await session.commit()
     return {"status": "success"}
 
-@router.post("/")
+@router.post("/add_role")
 async def add_role(new_role: RoleCreate, session: AsyncSession = Depends(get_async_session)):
     stmt = insert(role).values(**new_role.dict())
     await session.execute(stmt)
