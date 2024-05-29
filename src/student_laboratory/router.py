@@ -17,3 +17,4 @@ async def get_student_laboratory_by_id(student_laboratory_id: int, session: Asyn
     result = await session.execute(query)
     return result.all()
 
+

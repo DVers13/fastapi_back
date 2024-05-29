@@ -18,8 +18,8 @@ class UserRead(schemas.BaseUser[int]):
 
 
 class UserCreate(schemas.BaseUserCreate):
-    username: str
     email: str
+    username: str
     password: str
     role_id: int
     group_id: int
