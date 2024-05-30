@@ -2,7 +2,7 @@ from datetime import datetime
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import Table, Column, Integer, String, TIMESTAMP, ForeignKey, JSON, Boolean, MetaData
-
+from sqlalchemy.dialects.postgresql import ARRAY
 from database import Base
 
 metadata = MetaData()
@@ -12,7 +12,7 @@ role = Table(
     metadata,
     Column("id", Integer, primary_key=True),
     Column("name", String, nullable=False),
-    Column("permissions", JSON),
+    Column("permissions", ARRAY(String)),
 )
 
 group = Table(
