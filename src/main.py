@@ -5,6 +5,7 @@ from auth.schemas import UserRead, UserCreate
 from laboratory.router import router as router_laboratory
 from student_laboratory.router import router as router_student_laboratory
 from auth.router import router as router_group_role
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="Nice App"
@@ -27,3 +28,13 @@ app.include_router(router_laboratory)
 app.include_router(router_student_laboratory)
 
 app.include_router(router_group_role)
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

@@ -5,13 +5,13 @@ from pydantic import BaseModel
 
 class LaboratoryCreate(BaseModel):
     name: str
-    description: str
+    url: str
     discipline_id: int
     deadline: datetime
 
 class LaboratoryUpdate(BaseModel):
     name: str
-    description: str
+    url: str
     discipline_id: int
     deadline: datetime
 
@@ -31,3 +31,7 @@ class DisciplineUpdate(BaseModel):
 
 class SubjectCreate(BaseModel):
     name: str
+
+class DisciplineGroupCreate(BaseModel):
+    group_id: int
+    discipline_id: int

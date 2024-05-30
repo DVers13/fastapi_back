@@ -31,8 +31,8 @@ discipline_teacher = Table(
     "discipline_teacher",
     metadata,
     Column("id", Integer, primary_key=True),
-    Column("teacher_id", Integer, ForeignKey(group.c.id)),
-    Column("discipline_id", Integer, ForeignKey(user.c.id)),
+    Column("teacher_id", Integer, ForeignKey(user.c.id)),
+    Column("discipline_id", Integer, ForeignKey(discipline.c.id)),
 )
 
 laboratory = Table(
@@ -40,7 +40,7 @@ laboratory = Table(
     metadata,
     Column("id", Integer, primary_key=True),
     Column("name", String),
-    Column("description", String, nullable=True),
+    Column("url", String, nullable=True),
     Column("discipline_id", Integer, ForeignKey(discipline.c.id)),
     Column("deadline", TIMESTAMP),
 )
