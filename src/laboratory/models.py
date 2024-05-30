@@ -16,23 +16,23 @@ discipline = Table(
     metadata,
     Column("id", Integer, primary_key=True),
     Column("info", String, nullable=True),
-    Column("subject_id", Integer, ForeignKey(subject.c.id)),
+    Column("subject_id", Integer, ForeignKey(subject.c.id, ondelete="CASCADE")),
 )
 
 discipline_groups = Table(
     "discipline_groups",
     metadata,
     Column("id", Integer, primary_key=True),
-    Column("group_id", Integer, ForeignKey(group.c.id)),
-    Column("discipline_id", Integer, ForeignKey(discipline.c.id)),
+    Column("group_id", Integer, ForeignKey(group.c.id, ondelete="CASCADE")),
+    Column("discipline_id", Integer, ForeignKey(discipline.c.id, ondelete="CASCADE")),
 )
 
 discipline_teacher = Table(
     "discipline_teacher",
     metadata,
     Column("id", Integer, primary_key=True),
-    Column("teacher_id", Integer, ForeignKey(user.c.id)),
-    Column("discipline_id", Integer, ForeignKey(discipline.c.id)),
+    Column("teacher_id", Integer, ForeignKey(user.c.id, ondelete="CASCADE")),
+    Column("discipline_id", Integer, ForeignKey(discipline.c.id, ondelete="CASCADE")),
 )
 
 laboratory = Table(
@@ -41,6 +41,6 @@ laboratory = Table(
     Column("id", Integer, primary_key=True),
     Column("name", String),
     Column("url", String, nullable=True),
-    Column("discipline_id", Integer, ForeignKey(discipline.c.id)),
+    Column("discipline_id", Integer, ForeignKey(discipline.c.id, ondelete="CASCADE")),
     Column("deadline", TIMESTAMP),
 )
