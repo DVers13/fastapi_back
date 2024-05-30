@@ -5,12 +5,29 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
 from auth.schemas import GroupCreate, RoleCreate
 from auth.models import group, role, user
+from auth.base_config import check_permissions
 
 
 router = APIRouter(
     prefix="/group_role",
     tags=["Group and Role"]
 )
+
+@router.get("/test_perm", dependencies=[Depends(check_permissions(["write"]))])
+async def test_perm():
+    return {"status": "success"}
+
+@router.post("/test_role")
+async def add_test_role(session: AsyncSession = Depends(get_async_session)):
+    new_role = {
+        "id" : 2,
+        "name" : "student",
+        "permissions": ["write"]
+    }
+    stmt = insert(role).values(**new_role)
+    await session.execute(stmt)
+    await session.commit()
+    return {"status": "success"}
 
 @router.post("/add_group")
 async def add_group(new_group: GroupCreate, session: AsyncSession = Depends(get_async_session)):
