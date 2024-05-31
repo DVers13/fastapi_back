@@ -1,6 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import func, select, insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from database import get_async_session
@@ -8,7 +8,7 @@ from laboratory.models import laboratory, discipline, subject, discipline_groups
 from laboratory.schemas import *
 from auth.models import User, user, group, role
 from auth.base_config import check_permissions, current_user
-
+from student_laboratory.models import student_laboratory
 router = APIRouter(
     prefix="/laboratory",
     tags=["Laboratory"]
@@ -205,7 +205,27 @@ async def get_info_discipline_by_id(discipline_id: int, session: AsyncSession = 
 
     query = select(laboratory).where(laboratory.c.discipline_id == discipline_row.id)
     result = await session.execute(query)
-    laboratorys = result.mappings().all()
+
+    laboratorys = [dict(row) for row in result.mappings().all()]
+
+    groups_id_list = [gr["id"] for gr in groups]
+    
+    for lab in range(len(laboratorys)):
+        completed_count_query = (
+            select(func.count(student_laboratory.c.id))
+            .join(laboratory, laboratory.c.id == student_laboratory.c.id_lab)
+            .where(
+                laboratory.c.id == laboratorys[lab]["id"],
+                student_laboratory.c.status == True
+            )
+        )
+        completed_count_result = await session.execute(completed_count_query)
+        completed_count = completed_count_result.scalar()
+
+        count_students_query = select(func.count(user.c.id)).where(user.c.group_id.in_(groups_id_list))
+        count_students_result = await session.execute(count_students_query)
+        count_students = count_students_result.scalar()
+        laboratorys[lab]["complete_percent"] = (completed_count / count_students) * 100
 
     return {
         "id": discipline_row.id,
