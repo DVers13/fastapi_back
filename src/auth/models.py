@@ -10,7 +10,7 @@ metadata = MetaData()
 role = Table(
     "role",
     metadata,
-    Column("id", Integer, primary_key=True),
+    Column("id", Integer, Sequence('role_id_seq', start=0, increment=1), primary_key=True),
     Column("name", String, nullable=False),
     Column("permissions", ARRAY(String)),
 )
@@ -18,7 +18,7 @@ role = Table(
 group = Table(
     "group",
     metadata,
-    Column("id", Integer, primary_key=True),
+    Column("id", Integer, Sequence('group_id_seq', start=0, increment=1), primary_key=True),
     Column("name", String, nullable=False),
 )
 

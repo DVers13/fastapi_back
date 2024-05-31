@@ -19,6 +19,12 @@ class DisciplineCreate(BaseModel):
     info: str
     subject_id: int
 
+class DisciplineFullCreate(BaseModel):
+    group_id_list: list[int]
+    subject_id: int
+    info: str
+    teacher_id_list: list[int]
+
 class DisciplineUpdate(BaseModel):
     info: str
     subject_id: int

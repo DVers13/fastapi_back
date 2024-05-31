@@ -1,3 +1,3 @@
-INSERT INTO "discipline_teacher" VALUES
-(1, 12, 1),
-(2, 12, 2);
+INSERT INTO "discipline_teacher" (teacher_id, discipline_id) VALUES
+(12, 1),
+(12, 2);

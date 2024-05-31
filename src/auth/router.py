@@ -57,7 +57,7 @@ async def get_all_teachers(session: AsyncSession = Depends(get_async_session)):
     return [{"user_id": teacher.id, "user_name": teacher.username} for teacher in teachers]
 
 @router.get("/get_all_users")
-async def get_all_teachers(session: AsyncSession = Depends(get_async_session)):
+async def get_all_users(session: AsyncSession = Depends(get_async_session)):
     query = select(user)
     result = await session.execute(query)
     return result.mappings().all()

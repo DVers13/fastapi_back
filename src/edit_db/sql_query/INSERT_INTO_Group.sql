@@ -1,4 +1,4 @@
-INSERT INTO "group" VALUES
-(1, 'ФИТ-211'),
-(2, 'ФИТ-212'),
-(3, 'МО-211');
+INSERT INTO "group" (name) VALUES
+('ФИТ-211'),
+('ФИТ-212'),
+('МО-211');

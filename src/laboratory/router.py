@@ -71,6 +71,31 @@ async def add_discipline(new_discipline: DisciplineCreate, session: AsyncSession
     await session.commit()
     return {"status": "success"}
 
+@router.post("/add_full_discipline") #, dependencies=[Depends(check_permissions(["write"]))]
+async def add_full_discipline(new_discipline: DisciplineFullCreate, session: AsyncSession = Depends(get_async_session)):
+    new_discipline_dict = new_discipline.model_dump()
+    group_id_list = new_discipline_dict.pop("group_id_list")
+    teacher_id_list = new_discipline_dict.pop("teacher_id_list")
+    stmt = insert(discipline).values(**new_discipline_dict).returning(discipline.c.id)
+    result = await session.execute(stmt)
+    new_discipline_id = result.scalar()
+    
+    if group_id_list:
+        group_stmt = insert(discipline_groups).values([
+            {"group_id": group_id, "discipline_id": new_discipline_id}
+            for group_id in group_id_list
+        ])
+        await session.execute(group_stmt)
+
+    if teacher_id_list:
+        teacher_stmt = insert(discipline_teacher).values([
+            {"teacher_id": teacher_id, "discipline_id": new_discipline_id}
+            for teacher_id in teacher_id_list
+        ])
+        await session.execute(teacher_stmt)
+    await session.commit()
+    return {"status": "success"}
+
 @router.patch("/update_discipline/") #, dependencies=[Depends(check_permissions(["write"]))]
 async def update_discipline(discipline_id: int, update_data: DisciplineUpdate, session: AsyncSession = Depends(get_async_session)):
     update_dict = {k: v for k, v in update_data.dict().items() if v is not None}

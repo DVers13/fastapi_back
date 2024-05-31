@@ -44,6 +44,14 @@ async def clear_all(session: AsyncSession = Depends(get_async_session)):
     await session.execute(stmt_student_laboratory)
 
     await session.execute(text("ALTER SEQUENCE user_id_seq RESTART WITH 1"))
+    await session.execute(text("ALTER SEQUENCE role_id_seq RESTART WITH 1"))
+    await session.execute(text("ALTER SEQUENCE group_id_seq RESTART WITH 1"))
+    await session.execute(text("ALTER SEQUENCE subject_id_seq RESTART WITH 1"))
+    await session.execute(text("ALTER SEQUENCE discipline_id_seq RESTART WITH 1"))
+    await session.execute(text("ALTER SEQUENCE discipline_groups_id_seq RESTART WITH 1"))
+    await session.execute(text("ALTER SEQUENCE discipline_teacher_id_seq RESTART WITH 1"))
+    await session.execute(text("ALTER SEQUENCE laboratory_id_seq RESTART WITH 1"))
+    await session.execute(text("ALTER SEQUENCE student_laboratory_id_seq RESTART WITH 1"))
 
     await session.commit()
     return {"status": "success"}
