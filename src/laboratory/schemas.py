@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from auth.schemas import Group
 
 class LaboratoryCreate(BaseModel):
     name: str
@@ -41,3 +42,8 @@ class SubjectCreate(BaseModel):
 class DisciplineGroupCreate(BaseModel):
     group_id: int
     discipline_id: int
+
+class DisciplineResponse(BaseModel):
+    discipline_id: int
+    subject: str
+    groups: list[Group]

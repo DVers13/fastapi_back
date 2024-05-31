@@ -6,7 +6,7 @@ from sqlalchemy.orm import selectinload
 from database import get_async_session
 from laboratory.models import laboratory, discipline, subject, discipline_groups, discipline_teacher
 from laboratory.schemas import *
-from auth.models import user, group, role
+from auth.models import User, user, group, role
 from auth.base_config import check_permissions, current_user
 
 router = APIRouter(
@@ -95,6 +95,42 @@ async def add_full_discipline(new_discipline: DisciplineFullCreate, session: Asy
         await session.execute(teacher_stmt)
     await session.commit()
     return {"status": "success"}
+
+@router.get("/get_full_discipline_for_teacher")
+async def get_full_discipline_for_teacher(user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
+    if not user.is_superuser and user.role_id != 1:
+        raise HTTPException(status_code=403, detail="You do not have permission to access this resource.")
+    
+    stmt = (
+        select(discipline)
+        .join(discipline_teacher, discipline.c.id == discipline_teacher.c.discipline_id)
+        .join(subject, discipline.c.subject_id == subject.c.id)
+        .where(discipline_teacher.c.teacher_id == user.id)
+    )
+    
+    result = await session.execute(stmt)
+    disciplines = result.mappings().all()
+
+    response = []
+    for disc in disciplines:
+        group_stmt = (
+            select(group)
+            .join(discipline_groups, group.c.id == discipline_groups.c.group_id)
+            .where(discipline_groups.c.discipline_id == disc.id)
+        )
+        group_result = await session.execute(group_stmt)
+        groups = group_result.mappings().all()
+
+        subject_stmt = select(subject).where(subject.c.id == disc.subject_id)
+        subject_result = await session.execute(subject_stmt)
+        subjects = subject_result.mappings().first()
+        response.append(DisciplineResponse(
+            discipline_id=disc.id,
+            subject=subjects.name,
+            groups=[Group(id=grp.id, name=grp.name) for grp in groups]
+        ))
+
+    return response
 
 @router.patch("/update_discipline/") #, dependencies=[Depends(check_permissions(["write"]))]
 async def update_discipline(discipline_id: int, update_data: DisciplineUpdate, session: AsyncSession = Depends(get_async_session)):

@@ -27,9 +27,10 @@ class UserCreate(schemas.BaseUserCreate):
     is_superuser: Optional[bool] = False
     is_verified: Optional[bool] = False
 
-
-class GroupCreate(BaseModel):
+class Group(BaseModel):
     id: int
+    name: str
+class GroupCreate(BaseModel):
     name: str
 
 class RoleCreate(BaseModel):
