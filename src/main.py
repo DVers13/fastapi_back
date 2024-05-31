@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI, Depends
 
 from auth.base_config import auth_backend, fastapi_users
 from auth.schemas import UserRead, UserCreate
 from laboratory.router import router as router_laboratory
+from auth.models import User
 from student_laboratory.router import router as router_student_laboratory
 from auth.router import router as router_group_role
 from edit_db.router import router as router_edit_db
@@ -24,11 +25,18 @@ app.include_router(
     tags=["Auth"],
 )
 
-app.include_router(
-    fastapi_users.get_verify_router(UserRead),
-    prefix="/auth",
-    tags=["auth"],
+router = APIRouter(
+    prefix="/users",
+    tags=["Users"]
 )
+
+current_user = fastapi_users.current_user()
+
+@router.get("/me", response_model=UserRead)
+async def get_me(user: User = Depends(current_user)):
+    return user
+
+app.include_router(router)
 
 app.include_router(router_laboratory)
 
