@@ -3,6 +3,7 @@ from fastapi import Depends, HTTPException
 from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import CookieTransport, AuthenticationBackend
 from fastapi_users.authentication import JWTStrategy
+from sqlalchemy import select
 
 from auth.manager import get_user_manager
 from auth.models import User, role
@@ -15,6 +16,8 @@ from database import get_async_session
 from fastapi_users.authentication import BearerTransport
 
 bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
+
+cookie_transport = CookieTransport(cookie_max_age=3600) # для теста
 
 def get_jwt_strategy() -> JWTStrategy:
     return JWTStrategy(secret=SECRET_AUTH, lifetime_seconds=3600)
@@ -33,8 +36,10 @@ fastapi_users = FastAPIUsers[User, int](
 current_user = fastapi_users.current_user()
 
 def check_permissions(required_permissions: List[str]):
-    def dependency(user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
-        user_role = session.query(role).filter(role.c.id == user.role_id).first()
+    async def dependency(user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
+        query = select(role).where(role.c.id == user.role_id)
+        result = await session.execute(query)
+        user_role = result.mappings().first()
         if not user_role:
             raise HTTPException(status_code=400, detail="Invalid role")
         

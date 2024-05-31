@@ -22,7 +22,7 @@ async def add_test_role(session: AsyncSession = Depends(get_async_session)):
     new_role = {
         "id" : 2,
         "name" : "student",
-        "permissions": ["write"]
+        "permissions": ["write", "read"]
     }
     stmt = insert(role).values(**new_role)
     await session.execute(stmt)
@@ -55,3 +55,4 @@ async def get_all_teachers(session: AsyncSession = Depends(get_async_session)):
     result = await session.execute(query)
     teachers = result.all()
     return [{"user_id": teacher.id, "user_name": teacher.username} for teacher in teachers]
+

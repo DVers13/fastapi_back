@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
-from sqlalchemy import Table, Column, Integer, String, TIMESTAMP, ForeignKey, JSON, Boolean, MetaData
+from sqlalchemy import Sequence, Table, Column, Integer, String, TIMESTAMP, ForeignKey, JSON, Boolean, MetaData
 from sqlalchemy.dialects.postgresql import ARRAY
 from database import Base
 
@@ -25,7 +25,7 @@ group = Table(
 user = Table(
     "user",
     metadata,
-    Column("id", Integer, primary_key=True),
+    Column("id", Integer, Sequence('user_id_seq', start=0, increment=1), primary_key=True),
     Column("email", String, nullable=False),
     Column("username", String, nullable=False),
     Column("registered_at", TIMESTAMP, default=datetime.utcnow),
@@ -38,7 +38,7 @@ user = Table(
 )
 
 class User(SQLAlchemyBaseUserTable[int], Base):
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence('user_id_seq', start=0, increment=1), primary_key=True)
     email = Column(String, nullable=False)
     username = Column(String, nullable=False)
     registered_at = Column(TIMESTAMP, default=datetime.utcnow)

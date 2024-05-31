@@ -1,0 +1,12 @@
+(1, 'Иван Иванов', 'ivan_ivanov@gmail.com', 2, 'b6cc46f2dd8fc905651771f4bd517c9f78e7fde2a753f5b57a02858eb088bf23', 1, true, false, false),
+(2, 'Мария Смирнова', 'maria_smirnova@gmail.com', 2, '080c64505ed8eefd5723d23a1c419ba43f6ebcddbd7b012db815fd5043e6eb3a', 2, true, false, false),
+(3, 'Алексей Петров', 'alex@example.com', 2, 'f10f19fd82aad4d34b9b3f21768b991d60d42c279e01da58aeaa749f4c564bba', 1, true, false, false),
+(4, 'Елена Сидорова', 'elena@example.com', 2, '81a2d35581b9e654d30dc0f5b22fcbae0d1250ac138f42da39fe01d9b194aa62', 3, true, false, true),
+(5, 'Дмитрий Козлов', 'dmitry@example.com', 2, 'f3cdb570752ef7ebe764188661127b21c68331631d635b38e541a45640b3329e', 2, true, false, false),
+(6, 'Ольга Новикова', 'olga@example.com', 2, '5082105010b28fa0508dea837b4466a09a40d9a6d412bf61e7f47c288f64f427', 1, true, false, true),
+(7, 'Павел Морозов', 'pavel@example.com', 2, '3abdd0a9ce9fdd3d4652ddcbe753a2323e632b3bf8e2d73bcc8e18963d522bbe', 2, true, false, true),
+(8, 'Наталья Васильева', 'natalia@example.com', 2, '96fd6cb7d3519acec1eafd8fbebe71c88cea1f2aa602171c72aaa0a8255eac8f', 3, true, false, false),
+(9, 'Сергей Игнатьев', 'sergei@example.com', 2, '00ea1355123a97a52d541321a5a60c10c16c995f714bfc95d0c7114f5a4bbada', 1, true, false, false),
+(10, 'Анна Кузнецова', 'anna@example.com', 2, '1dd45eef0a33b99579920cf70349bcf2d1d7acc625fe3e61684d3810ae6bdf0a', 2, true, false, false),
+(11, 'Ivan Sharun', 'zaryanezrya@gmail.com', 1, '51781bbe800d404e66892801cab4ef4fb685cf8b82b20d47c4fec87c12b5ddf2', NULL, true, true, true),
+(12, 'Евгений Тюменцев', 'etyumentcev@gmail.com', 1, '730d49a46468a5fd30e957185b12fec3217d8674f4e2fc2d04dee0d3f6aa747f', NULL, true, true, true);

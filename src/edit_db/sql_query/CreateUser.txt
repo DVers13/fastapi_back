@@ -1,0 +1,122 @@
+[
+    {
+        "email": "ivan_ivanov@gmail.com", 
+        "password": "1234567890abcdef", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_verified": false, 
+        "username": "Иван Иванов", 
+        "role_id": 2, 
+        "group_id": 1
+    },
+    {
+        "email": "maria_smirnova@gmail.com", 
+        "password": "abcdef1234567890", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_verified": false, 
+        "username": "Мария Смирнова", 
+        "role_id": 2, 
+        "group_id": 2
+    },
+    {
+        "email": "alex@example.com", 
+        "password": "fedcba0987654321", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_verified": false, 
+        "username": "Алексей Петров", 
+        "role_id": 2, 
+        "group_id": 1
+    },
+    {
+        "email": "elena@example.com", 
+        "password": "0987654321abcdef", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_verified": true, 
+        "username": "Елена Сидорова", 
+        "role_id": 2, 
+        "group_id": 3
+    },
+    {
+        "email": "dmitry@example.com", 
+        "password": "abcdef0987654321", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_verified": false, 
+        "username": "Дмитрий Козлов", 
+        "role_id": 2, 
+        "group_id": 2
+    },
+    {
+        "email": "olga@example.com", 
+        "password": "1234abcd5678efgh", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_verified": true, 
+        "username": "Ольга Новикова", 
+        "role_id": 2, 
+        "group_id": 1
+    },
+    {
+        "email": "pavel@example.com", 
+        "password": "abcd1234efgh5678", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_verified": true, 
+        "username": "Павел Морозов", 
+        "role_id": 2, 
+        "group_id": 2
+    },
+    {
+        "email": "natalia@example.com", 
+        "password": "5678abcd1234efgh", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_verified": false, 
+        "username": "Наталья Васильева", 
+        "role_id": 2, 
+        "group_id": 3
+    },
+    {
+        "email": "sergei@example.com", 
+        "password": "efgh5678abcd1234", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_verified": false, 
+        "username": "Сергей Игнатьев", 
+        "role_id": 2, 
+        "group_id": 1
+    },
+    {
+        "email": "anna@example.com", 
+        "password": "1234efgh5678abcd", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_verified": false, 
+        "username": "Анна Кузнецова", 
+        "role_id": 2, 
+        "group_id": 2
+    },
+    {
+        "email": "zaryanezrya@gmail.com", 
+        "password": "abcd5678efgh1234", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_verified": true, 
+        "username": "Ivan Sharun", 
+        "role_id": 1, 
+        "group_id": 1
+    },
+    {
+        "email": "etyumentcev@gmail.com", 
+        "password": "5678efgh1234abcd", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_verified": true, 
+        "username": "Евгений Тюменцев", 
+        "role_id": 1, 
+        "group_id": 1
+    }
+]
