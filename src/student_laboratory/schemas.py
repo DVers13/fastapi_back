@@ -1,9 +1,12 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel
 
 class StudentLaboratoryCreate(BaseModel):
     id_lab: int
-    name: str
+    id_student: int
+    id_teacher: Optional[int] = None
+    id_discipline: int
     url: str
     
 class StudentLaboratoryUpdate(BaseModel):
