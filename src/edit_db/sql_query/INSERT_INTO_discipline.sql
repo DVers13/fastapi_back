@@ -1,3 +1,3 @@
 INSERT INTO "discipline" (subject_id) VALUES
 (1),
-(1);
+(2);
