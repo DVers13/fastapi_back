@@ -15,7 +15,6 @@ discipline = Table(
     "discipline",
     metadata,
     Column("id", Integer, Sequence('discipline_id_seq', start=0, increment=1), primary_key=True),
-    Column("info", String, nullable=True),
     Column("subject_id", Integer, ForeignKey(subject.c.id, ondelete="CASCADE")),
 )
 
