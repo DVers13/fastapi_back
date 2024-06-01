@@ -29,6 +29,11 @@ class DisciplineUpdate(BaseModel):
     info: str
     subject_id: int
 
+class DisciplineUpdate_2(BaseModel):
+    id: int
+    group_id_list: list[int]
+    teacher_id_list: list[int]
+
 # class SubjectRead(BaseModel):
 #     id: int
 #     name: str

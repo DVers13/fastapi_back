@@ -34,7 +34,7 @@ async def add_laboratory(new_laboratory: LaboratoryCreate, session: AsyncSession
     return {"status": "success"}
 
 @router.patch("/update_laboratory/") #, dependencies=[Depends(check_permissions(["write"]))]
-async def update_discipline(laboratory_id: int, update_data: LaboratoryUpdate, session: AsyncSession = Depends(get_async_session)):
+async def update_laboratory(laboratory_id: int, update_data: LaboratoryUpdate, session: AsyncSession = Depends(get_async_session)):
     update_dict = {k: v for k, v in update_data.dict().items() if v is not None}
     
     if not update_dict:
@@ -131,6 +131,36 @@ async def get_full_discipline_for_teacher(user: User = Depends(current_user), se
         ))
 
     return response
+
+@router.patch("/update_discipline_for_teacher/")
+async def update_discipline_for_teacher(update_data: DisciplineUpdate_2, session: AsyncSession = Depends(get_async_session)):
+    update_dict = {k: v for k, v in update_data.model_dump().items() if v is not None}
+
+    discipline_id = update_dict["id"]
+    group_id_list = update_dict["group_id_list"]
+    teacher_id_list = update_dict["teacher_id_list"]
+
+    if not update_dict:
+        raise HTTPException(status_code=400, detail="No data provided for update")
+
+    delete_group_stmt = delete(discipline_groups).where(discipline_groups.c.discipline_id == discipline_id)
+    await session.execute(delete_group_stmt)
+
+    delete_teacher_stmt = delete(discipline_teacher).where(discipline_teacher.c.discipline_id == discipline_id)
+    await session.execute(delete_teacher_stmt)
+
+    for group_id in group_id_list:
+        insert_group_stmt = insert(discipline_groups).values(discipline_id=discipline_id, group_id=group_id)
+        await session.execute(insert_group_stmt)
+
+    for teacher_id in teacher_id_list:
+        insert_teacher_stmt = insert(discipline_teacher).values(discipline_id=discipline_id, teacher_id=teacher_id)
+        await session.execute(insert_teacher_stmt)
+
+    await session.commit()
+
+    return {"status": "success"}
+
 
 @router.patch("/update_discipline/") #, dependencies=[Depends(check_permissions(["write"]))]
 async def update_discipline(discipline_id: int, update_data: DisciplineUpdate, session: AsyncSession = Depends(get_async_session)):
