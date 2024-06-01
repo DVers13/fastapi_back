@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
@@ -61,3 +61,17 @@ async def get_all_teachers(session: AsyncSession = Depends(get_async_session)):
     query = select(user)
     result = await session.execute(query)
     return result.mappings().all()
+
+@router.patch("/update_role/") #, dependencies=[Depends(check_permissions(["write"]))]
+async def update_discipline(user_id: int, role_id: int, session: AsyncSession = Depends(get_async_session)):
+    dict_update ={"role_id" : role_id}
+    stmt = (
+        update(user)
+        .where(user.c.id == user_id)
+        .values(**dict_update)
+    )
+
+    result = await session.execute(stmt)
+    await session.commit()
+
+    return {"status": "success"}

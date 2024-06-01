@@ -6,9 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
 from auth.models import User
+from laboratory.models import discipline_teacher, laboratory
 from student_laboratory.models import student_laboratory
 from student_laboratory.schemas import StudentLaboratoryCreate, StudentLaboratoryUpdate
-from auth.base_config import current_user
+from auth.base_config import check_permissions, current_user
 router = APIRouter(
     prefix="/student_laboratory",
     tags=["student_laboratory"]
@@ -20,6 +21,37 @@ async def get_student_laboratory_by_id(student_laboratory_id: int, session: Asyn
     result = await session.execute(query)
     return result.all()
 
+@router.get("/get_all_student_laboratory_for_teacher", dependencies=[Depends(check_permissions(["get_student_laboratory_for_teacher"]))])
+async def get_student_laboratory_for_teacher(user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
+    teacher_id = user.id
+
+    query_with_teacher = (select(student_laboratory)
+                          .where(student_laboratory.c.id_teacher == teacher_id,
+                                student_laboratory.c.status == False,
+                                student_laboratory.c.valid == True))
+    result_with_teacher = await session.execute(query_with_teacher)
+    labs_with_teacher = result_with_teacher.mappings().all()
+
+    disciplines_query = select(discipline_teacher.c.discipline_id).where(discipline_teacher.c.teacher_id == teacher_id)
+    result_disciplines = await session.execute(disciplines_query)
+    discipline_ids = [row.discipline_id for row in result_disciplines]
+
+    query_without_teacher = (
+        select(student_laboratory)
+        .join(laboratory, laboratory.c.id == student_laboratory.c.id_lab)
+        .where(
+            student_laboratory.c.id_teacher.is_(None),
+            laboratory.c.discipline_id.in_(discipline_ids),
+            student_laboratory.c.status == False,
+            student_laboratory.c.valid == True)
+        )
+    result_without_teacher = await session.execute(query_without_teacher)
+    labs_without_teacher = result_without_teacher.mappings().all()
+
+    all_labs = labs_with_teacher + labs_without_teacher
+    sorted_labs = sorted(all_labs, key=lambda lab: lab.id)
+    return sorted_labs
+
 @router.post("/add_student_laboratory")
 async def add_student_laboratory(new_student_laboratory: Annotated[StudentLaboratoryCreate, Depends()], user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
     new_student_laboratory_dict = new_student_laboratory.model_dump()
@@ -27,6 +59,7 @@ async def add_student_laboratory(new_student_laboratory: Annotated[StudentLabora
     new_student_laboratory_dict["status"] = False
     new_student_laboratory_dict["score"] = "0"
     new_student_laboratory_dict["count_try"] = 0
+    new_student_laboratory_dict["valid"] = True
     stmt = insert(student_laboratory).values(**new_student_laboratory_dict)
     await session.execute(stmt)
     await session.commit()

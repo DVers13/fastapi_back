@@ -17,6 +17,7 @@ student_laboratory = Table(
     Column("loading_time", TIMESTAMP, default=datetime.utcnow),
     Column("url", String),
     Column("status", Boolean),
+    Column("valid", Boolean),
     Column("score", String),
     Column("count_try", Integer),
 )
