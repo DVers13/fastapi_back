@@ -13,7 +13,6 @@ class LaboratoryCreate(BaseModel):
 class LaboratoryUpdate(BaseModel):
     name: str
     url: str
-    discipline_id: int
     deadline: datetime
 
 class DisciplineCreate(BaseModel):
