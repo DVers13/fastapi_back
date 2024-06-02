@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 class StudentLaboratoryCreate(BaseModel):
     id_lab: int
-    id_student: int
     id_teacher: Optional[int] = None
     id_discipline: int
     url: str
