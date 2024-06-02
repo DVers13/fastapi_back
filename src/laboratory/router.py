@@ -189,6 +189,7 @@ async def get_full_laboratory_for_student(id_discipline: int, user_me: User = De
         .join(discipline_groups, group.c.id == discipline_groups.c.group_id)
         .where(discipline_groups.c.discipline_id == discipline_result.id)
     )
+
     group_result = await session.execute(group_stmt)
     groups = group_result.mappings().all()
 

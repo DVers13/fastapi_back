@@ -55,12 +55,12 @@ class SpecLaboratory(BaseModel):
     laboratory_id: int
     name: str
     deadline: datetime
-    status: bool # s
-    valid: bool # s
-    count_try: int # s
+    status: Optional[bool] = None # s
+    valid: Optional[bool] = None # s
+    count_try: Optional[int] = None # s
     url_teacher: str
-    last_update_date: datetime # s
-    url_student: str # s
+    last_update_date: Optional[datetime] = None # s
+    url_student: Optional[str] =  None # s
     reviewers_id: Optional[int] = None # s
 
 class Teacher(BaseModel):
