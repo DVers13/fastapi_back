@@ -220,6 +220,13 @@ async def get_full_laboratory_for_student(id_discipline: int, user_me: User = De
                 url_student = student_laboratory_result.url,
                 reviewers_id = student_laboratory_result.id_teacher
             ))
+        else:
+            laboratory_list.append(SpecLaboratory(
+                laboratory_id = lab.id,
+                name = lab.name,
+                deadline = lab.deadline,
+                url_teacher = lab.url
+            ))
     stmt = (select(discipline_teacher.c.teacher_id, user.c.username)
             .join(user, user.c.id == discipline_teacher.c.teacher_id)
             .where(discipline_teacher.c.discipline_id == id_discipline))
