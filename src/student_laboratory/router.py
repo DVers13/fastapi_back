@@ -75,29 +75,40 @@ async def add_student_laboratory(new_student_laboratory: Annotated[StudentLabora
     await session.commit()
     return {"status": "success"}
 
-# @router.patch("/update_student_laboratory/") #, dependencies=[Depends(check_permissions(["write"]))]
-# async def update_student_laboratory(student_laboratory_id: int, update_data: StudentLaboratoryUpdate, session: AsyncSession = Depends(get_async_session)):
-#     update_dict = {k: v for k, v in update_data.dict().items() if v is not None}
+@router.patch("/accept_student_laboratory/", dependencies=[Depends(check_permissions(["accept"]))])
+async def update_student_laboratory(student_laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
     
-#     if not update_dict:
-#         raise HTTPException(status_code=400, detail="No data provided for update")
+    stmt = (
+        update(student_laboratory)
+        .where(student_laboratory.c.id == student_laboratory_id)
+        .values(status = True)
+    )
+
+    result = await session.execute(stmt)
+    await session.commit()
+
+    if result.rowcount == 0:
+        raise HTTPException(status_code=404, detail="Student laboratory not found")
+
+    return {"status": "success"}
+
+
+@router.patch("/deny_student_laboratory/", dependencies=[Depends(check_permissions(["deny"]))])
+async def update_student_laboratory(student_laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
     
-#     if not update_dict:
-#         raise HTTPException(status_code=400, detail="No data provided for update")
+    stmt = (
+        update(student_laboratory)
+        .where(student_laboratory.c.id == student_laboratory_id)
+        .values(valid = False)
+    )
 
-#     stmt = (
-#         update(student_laboratory)
-#         .where(student_laboratory.c.id == student_laboratory_id)
-#         .values(**update_dict)
-#     )
+    result = await session.execute(stmt)
+    await session.commit()
 
-#     result = await session.execute(stmt)
-#     await session.commit()
+    if result.rowcount == 0:
+        raise HTTPException(status_code=404, detail="Student laboratory not found")
 
-#     if result.rowcount == 0:
-#         raise HTTPException(status_code=404, detail="Discipline not found")
-
-#     return {"status": "success"}
+    return {"status": "success"}
 
 @router.delete("/delete_student_laboratory_by_id")
 async def delete_discipline_by_id(student_laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
