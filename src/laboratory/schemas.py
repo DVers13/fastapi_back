@@ -63,8 +63,13 @@ class SpecLaboratory(BaseModel):
     url_student: str # s
     reviewers_id: Optional[int] = None # s
 
+class Teacher(BaseModel):
+    id: int
+    name: str
+
 class LaboratoryStudentResponse(BaseModel):
     discipline_id: int
     subject: str
+    teacher_list: list[Teacher]
     groups: list[Group]
     laboratory_list: list[SpecLaboratory]

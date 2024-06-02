@@ -170,15 +170,15 @@ async def get_full_discipline_for_student(user: User = Depends(current_user), se
 
 
 @router.get("/get_full_laboratory_for_student")
-async def get_full_laboratory_for_student(id_discipline: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
-    if user.role_id != 2:
+async def get_full_laboratory_for_student(id_discipline: int, user_me: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
+    if user_me.role_id != 2:
         raise HTTPException(status_code=403, detail="You do not have permission to access this resource.")
     
     stmt = (
         select(discipline)
         .join(discipline_groups, discipline.c.id == discipline_groups.c.discipline_id)
         .join(subject, discipline.c.subject_id == subject.c.id)
-        .where(discipline_groups.c.group_id == user.group_id).where(and_(discipline.c.id == id_discipline))
+        .where(discipline_groups.c.group_id == user_me.group_id).where(and_(discipline.c.id == id_discipline))
     )
     
     result = await session.execute(stmt)
@@ -219,11 +219,18 @@ async def get_full_laboratory_for_student(id_discipline: int, user: User = Depen
                 url_student = student_laboratory_result.url,
                 reviewers_id = student_laboratory_result.id_teacher
             ))
+    stmt = (select(discipline_teacher.c.teacher_id, user.c.username)
+            .join(user, user.c.id == discipline_teacher.c.teacher_id)
+            .where(discipline_teacher.c.discipline_id == id_discipline))
+            
+    result = await session.execute(stmt)
+    teacher_id_list_result = result.mappings().all()
 
     return LaboratoryStudentResponse(
         discipline_id=discipline_result.id,
         subject=subjects.name,
         groups=[Group(id=grp.id, name=grp.name) for grp in groups],
+        teacher_list = [Teacher(id = teach.teacher_id, name = teach.username) for teach in teacher_id_list_result],
         laboratory_list = laboratory_list
     )
 
