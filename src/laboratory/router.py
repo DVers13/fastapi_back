@@ -206,19 +206,19 @@ async def get_full_laboratory_for_student(id_discipline: int, user: User = Depen
         stmt = (select(student_laboratory).where(student_laboratory.c.id_lab == lab.id))
         result = await session.execute(stmt)
         student_laboratory_result = result.mappings().first()
-
-        laboratory_list.append(SpecLaboratory(
-            laboratory_id = lab.id,
-            name = lab.name,
-            deadline = lab.deadline,
-            status = student_laboratory_result.status,
-            valid = student_laboratory_result.valid,
-            count_try = student_laboratory_result.count_try,
-            url_teacher = lab.url,
-            last_update_date = student_laboratory_result.loading_time,
-            url_student = student_laboratory_result.url,
-            reviewers_id = student_laboratory_result.id_teacher
-        ))
+        if student_laboratory_result:
+            laboratory_list.append(SpecLaboratory(
+                laboratory_id = lab.id,
+                name = lab.name,
+                deadline = lab.deadline,
+                status = student_laboratory_result.status,
+                valid = student_laboratory_result.valid,
+                count_try = student_laboratory_result.count_try,
+                url_teacher = lab.url,
+                last_update_date = student_laboratory_result.loading_time,
+                url_student = student_laboratory_result.url,
+                reviewers_id = student_laboratory_result.id_teacher
+            ))
 
     return LaboratoryStudentResponse(
         discipline_id=discipline_result.id,
