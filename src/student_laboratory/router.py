@@ -76,7 +76,7 @@ async def add_student_laboratory(new_student_laboratory: Annotated[StudentLabora
     return {"status": "success"}
 
 @router.patch("/accept_student_laboratory/", dependencies=[Depends(check_permissions(["accept"]))])
-async def update_student_laboratory(student_laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
+async def accept_student_laboratory(student_laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
     
     stmt = (
         update(student_laboratory)
@@ -94,12 +94,30 @@ async def update_student_laboratory(student_laboratory_id: int, session: AsyncSe
 
 
 @router.patch("/deny_student_laboratory/", dependencies=[Depends(check_permissions(["deny"]))])
-async def update_student_laboratory(student_laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
+async def deny_student_laboratory(student_laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
     
     stmt = (
         update(student_laboratory)
         .where(student_laboratory.c.id == student_laboratory_id)
         .values(valid = False)
+    )
+
+    result = await session.execute(stmt)
+    await session.commit()
+
+    if result.rowcount == 0:
+        raise HTTPException(status_code=404, detail="Student laboratory not found")
+
+    return {"status": "success"}
+
+@router.patch("/repeat_student_laboratory/", dependencies=[Depends(check_permissions(["update"]))])
+async def repeat_student_laboratory(update_data: Annotated[StudentLaboratoryUpdate, Depends()], session: AsyncSession = Depends(get_async_session)):
+    stmt = (
+        update(student_laboratory)
+        .where(student_laboratory.c.id == update_data.student_laboratory_id)
+        .values(url = update_data.url,
+                count_try=student_laboratory.c.count_try + 1,
+                valid = True)
     )
 
     result = await session.execute(stmt)

@@ -10,5 +10,5 @@ class StudentLaboratoryCreate(BaseModel):
     url: str
     
 class StudentLaboratoryUpdate(BaseModel):
-    name: str
+    student_laboratory_id: int
     url: str
