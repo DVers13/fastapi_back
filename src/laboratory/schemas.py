@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -48,3 +49,22 @@ class DisciplineResponse(BaseModel):
     discipline_id: int
     subject: str
     groups: list[Group]
+
+
+class SpecLaboratory(BaseModel):
+    laboratory_id: int
+    name: str
+    deadline: datetime
+    status: bool # s
+    valid: bool # s
+    count_try: int # s
+    url_teacher: str
+    last_update_date: datetime # s
+    url_student: str # s
+    reviewers_id: Optional[int] = None # s
+
+class LaboratoryStudentResponse(BaseModel):
+    discipline_id: int
+    subject: str
+    groups: list[Group]
+    laboratory_list: list[SpecLaboratory]

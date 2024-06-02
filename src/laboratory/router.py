@@ -1,6 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import func, select, insert, update, delete
+from sqlalchemy import and_, func, select, insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from database import get_async_session
@@ -167,6 +167,65 @@ async def get_full_discipline_for_student(user: User = Depends(current_user), se
         ))
 
     return response
+
+
+@router.get("/get_full_laboratory_for_student")
+async def get_full_laboratory_for_student(id_discipline: int, user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
+    if user.role_id != 2:
+        raise HTTPException(status_code=403, detail="You do not have permission to access this resource.")
+    
+    stmt = (
+        select(discipline)
+        .join(discipline_groups, discipline.c.id == discipline_groups.c.discipline_id)
+        .join(subject, discipline.c.subject_id == subject.c.id)
+        .where(discipline_groups.c.group_id == user.group_id).where(and_(discipline.c.id == id_discipline))
+    )
+    
+    result = await session.execute(stmt)
+    discipline_result = result.mappings().first()
+
+    group_stmt = (
+        select(group)
+        .join(discipline_groups, group.c.id == discipline_groups.c.group_id)
+        .where(discipline_groups.c.discipline_id == discipline_result.id)
+    )
+    group_result = await session.execute(group_stmt)
+    groups = group_result.mappings().all()
+
+    subject_stmt = select(subject).where(subject.c.id == discipline_result.subject_id)
+    subject_result = await session.execute(subject_stmt)
+    subjects = subject_result.mappings().first()
+
+    laboratory_list = []
+
+    stmt = (select(laboratory).where(laboratory.c.discipline_id == id_discipline))
+    result = await session.execute(stmt)
+    laboratory_result = result.mappings().all()
+
+    for lab in laboratory_result:
+        stmt = (select(student_laboratory).where(student_laboratory.c.id_lab == lab.id))
+        result = await session.execute(stmt)
+        student_laboratory_result = result.mappings().first()
+
+        laboratory_list.append(SpecLaboratory(
+            laboratory_id = lab.id,
+            name = lab.name,
+            deadline = lab.deadline,
+            status = student_laboratory_result.status,
+            valid = student_laboratory_result.valid,
+            count_try = student_laboratory_result.count_try,
+            url_teacher = lab.url,
+            last_update_date = student_laboratory_result.loading_time,
+            url_student = student_laboratory_result.url,
+            reviewers_id = student_laboratory_result.id_teacher
+        ))
+
+    return LaboratoryStudentResponse(
+        discipline_id=discipline_result.id,
+        subject=subjects.name,
+        groups=[Group(id=grp.id, name=grp.name) for grp in groups],
+        laboratory_list = laboratory_list
+    )
 
 @router.patch("/update_discipline_for_teacher/")
 async def update_discipline_for_teacher(update_data: DisciplineUpdate_2, session: AsyncSession = Depends(get_async_session)):
