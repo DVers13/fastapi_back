@@ -221,6 +221,7 @@ async def get_full_laboratory_for_student(id_discipline: int, user_me: User = De
         if student_laboratory_result:
             laboratory_list.append(SpecLaboratory(
                 laboratory_id = lab.id,
+                student_laboratory_id = student_laboratory_result.id,
                 name = lab.name,
                 deadline = lab.deadline,
                 status = student_laboratory_result.status,

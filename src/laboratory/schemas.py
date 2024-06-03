@@ -53,6 +53,7 @@ class DisciplineResponse(BaseModel):
 
 class SpecLaboratory(BaseModel):
     laboratory_id: int
+    student_laboratory_id: Optional[int] = None
     name: str
     deadline: datetime
     status: Optional[bool] = None # s
