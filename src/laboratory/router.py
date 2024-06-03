@@ -204,7 +204,7 @@ async def get_full_laboratory_for_student(id_discipline: int, user_me: User = De
     laboratory_result = result.mappings().all()
 
     for lab in laboratory_result:
-        stmt = (select(student_laboratory).where(student_laboratory.c.id_lab == lab.id, student_laboratory.id_student == user_me.id))
+        stmt = (select(student_laboratory).where(student_laboratory.c.id_lab == lab.id, student_laboratory.c.id_student == user_me.id))
         result = await session.execute(stmt)
         student_laboratory_result = result.mappings().first()
         if student_laboratory_result:
