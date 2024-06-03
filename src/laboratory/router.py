@@ -34,7 +34,18 @@ async def add_laboratory(new_laboratory: LaboratoryCreate, session: AsyncSession
     return {"status": "success"}
 
 @router.patch("/update_laboratory/") #, dependencies=[Depends(check_permissions(["write"]))]
-async def update_laboratory(laboratory_id: int, update_data: LaboratoryUpdate, session: AsyncSession = Depends(get_async_session)):
+async def update_laboratory(laboratory_id: int, update_data: LaboratoryUpdate, user_tg: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
+    
+    query = (select(discipline_teacher.c.teacher_id)
+             .join(laboratory, laboratory.c.discipline_id == discipline_teacher.c.discipline_id)
+             .where(laboratory.c.id == laboratory_id))
+    result = await session.execute(query)
+    teacher_list = result.mappings().all()
+    teacher_list = [teach.teacher_id for teach in teacher_list]
+
+    if user_tg.id not in teacher_list:
+        raise HTTPException(status_code=401, detail="You are not a teacher of this laboratory")
+
     update_dict = {k: v for k, v in update_data.dict().items() if v is not None}
     
     if not update_dict:
