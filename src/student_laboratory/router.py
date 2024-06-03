@@ -96,12 +96,14 @@ async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_use
     return finish_laboratory
 
 @router.get("/get_all_student_laboratory_for_student")
-async def get_student_laboratory_for_teacher(discipline_id: Query[int] = None, user_tg: User = Depends(current_user),
+async def get_student_laboratory_for_teacher(discipline_id: int = Query(None), user_tg: User = Depends(current_user),
                                         session: AsyncSession = Depends(get_async_session)) -> list[StudentLaboratoryGet]:
-    
+    filters = []
+    if discipline_id is not None:
+        filters.append(student_laboratory.c.id_discipline == discipline_id)
     query = (select(student_laboratory).
                           join(laboratory, laboratory.c.id == student_laboratory.c.id_lab)
-                          .where(student_laboratory.c.id_student == user_tg.id, student_laboratory.c.id_discipline == discipline_id))
+                          .where(student_laboratory.c.id_student == user_tg.id).where(and_(*filters)))
 
     result = await session.execute(query)
     labs = result.mappings().all()
@@ -203,13 +205,21 @@ async def deny_student_laboratory(student_laboratory_id: int, session: AsyncSess
 
 @router.patch("/repeat_student_laboratory/", dependencies=[Depends(check_permissions(["update"]))])
 async def repeat_student_laboratory(update_data: Annotated[StudentLaboratoryUpdate, Depends()], session: AsyncSession = Depends(get_async_session)):
-    stmt = (
-        update(student_laboratory)
+    query = select(student_laboratory.c.valid, student_laboratory.c.count_try).where(student_laboratory.c.id == update_data.student_laboratory_id)
+    result = await session.execute(query)
+    valid_and_try_dict = result.mappings().first()
+
+    update_values = {
+        'url': update_data.url,
+        'valid': True
+    }
+
+    if not valid_and_try_dict.valid:
+        update_values['count_try'] = valid_and_try_dict.count_try + 1
+
+    stmt = (update(student_laboratory)
         .where(student_laboratory.c.id == update_data.student_laboratory_id)
-        .values(url = update_data.url,
-                count_try=student_laboratory.c.count_try + 1,
-                valid = True)
-    )
+        .values(**update_values))
 
     result = await session.execute(stmt)
     await session.commit()

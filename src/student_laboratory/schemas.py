@@ -10,6 +10,7 @@ class StudentLaboratoryCreate(BaseModel):
     
 class StudentLaboratoryUpdate(BaseModel):
     student_laboratory_id: int
+    id_teacher: Optional[int] = None
     url: str
 
 class StudentInfo(BaseModel):
