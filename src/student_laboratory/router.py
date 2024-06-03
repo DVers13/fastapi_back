@@ -96,12 +96,12 @@ async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_use
     return finish_laboratory
 
 @router.get("/get_all_student_laboratory_for_student")
-async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_user),
+async def get_student_laboratory_for_teacher(discipline_id: int, user_tg: User = Depends(current_user),
                                         session: AsyncSession = Depends(get_async_session)) -> list[StudentLaboratoryGet]:
     
     query = (select(student_laboratory).
                           join(laboratory, laboratory.c.id == student_laboratory.c.id_lab)
-                          .where(student_laboratory.c.id_student == user_tg.id))
+                          .where(student_laboratory.c.id_student == user_tg.id, student_laboratory.c.id_discipline == discipline_id))
 
     result = await session.execute(query)
     labs = result.mappings().all()
