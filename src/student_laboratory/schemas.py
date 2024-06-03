@@ -20,7 +20,7 @@ class StudentInfo(BaseModel):
 class DisciplineInfo(BaseModel):
     id: int
     name: str
-class StudentLaboratoryForTeacher(BaseModel):
+class StudentLaboratoryGet(BaseModel):
     student_laboratory_id: int
     laboratory_name: str
     student: StudentInfo

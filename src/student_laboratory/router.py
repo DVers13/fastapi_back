@@ -8,7 +8,7 @@ from database import get_async_session
 from auth.models import User, user, group
 from laboratory.models import discipline_teacher, laboratory, subject, discipline
 from student_laboratory.models import student_laboratory
-from student_laboratory.schemas import DisciplineInfo, StudentInfo, StudentLaboratoryCreate, StudentLaboratoryForTeacher, StudentLaboratoryUpdate
+from student_laboratory.schemas import DisciplineInfo, StudentInfo, StudentLaboratoryCreate, StudentLaboratoryGet, StudentLaboratoryUpdate
 from auth.base_config import check_permissions, current_user
 router = APIRouter(
     prefix="/student_laboratory",
@@ -26,7 +26,7 @@ async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_use
                                         session: AsyncSession = Depends(get_async_session),
                                         is_personally: bool = Query(False),
                                         discipline_id: int = Query(None),
-                                        group_id: int = Query(None)) -> list[StudentLaboratoryForTeacher]:
+                                        group_id: int = Query(None)) -> list[StudentLaboratoryGet]:
     teacher_id = user_tg.id
     labs_without_teacher = []
 
@@ -81,7 +81,7 @@ async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_use
         deadline = laboratory_info.deadline
         url_task = laboratory_info.url
         laboratory_name = laboratory_info.name
-        laboratory_teach = StudentLaboratoryForTeacher(student_laboratory_id = lab.id,
+        laboratory_teach = StudentLaboratoryGet(student_laboratory_id = lab.id,
                                                         laboratory_name = laboratory_name,
                                                         student = student,
                                                         discipline = discipline_info,
@@ -94,6 +94,63 @@ async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_use
                                                         count_try = lab.count_try)
         finish_laboratory.append(laboratory_teach)
     return finish_laboratory
+
+# @router.get("/get_all_student_laboratory_for_student")
+# async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_user),
+#                                         session: AsyncSession = Depends(get_async_session)) -> list[StudentLaboratoryGet]:
+#     user_id = user_tg.id
+#     labs_without_teacher = []
+
+#     query_with_teacher = (select(student_laboratory).
+#                           join(laboratory, laboratory.c.id == student_laboratory.c.id_lab).
+#                           join(user, user.c.id == student_laboratory.c.id_student)
+#                           .where(student_laboratory.c.id_teacher == teacher_id))
+
+#     result_with_teacher = await session.execute(query_with_teacher)
+#     labs_with_teacher = result_with_teacher.mappings().all()
+
+#     all_labs = labs_with_teacher + labs_without_teacher
+#     sorted_labs = sorted(all_labs, key=lambda lab: lab['id'])
+#     finish_laboratory = []
+#     for lab in sorted_labs:
+
+#         query = select(user.c.username, user.c.group_id).where(user.c.id == lab.id_student)
+#         result_query = await session.execute(query)
+#         user_info = result_query.mappings().first()
+
+#         query = select(group.c.name).where(group.c.id == user_info.group_id)
+#         result_query = await session.execute(query)
+#         group_name = result_query.mappings().first()
+
+#         student = StudentInfo(id = lab.id_student, name = user_info.username, group = group_name.name)
+
+#         query = (select(subject.c.name)
+#                  .join(discipline, discipline.c.subject_id == subject.c.id)
+#                  .where(discipline.c.id == lab.id_discipline))
+#         result_query = await session.execute(query)
+#         subjectname = result_query.mappings().first()
+#         discipline_info = DisciplineInfo(id = lab.id_discipline, name = subjectname.name)
+
+#         query = (select(laboratory.c.url, laboratory.c.deadline, laboratory.c.name)
+#                  .where(laboratory.c.id == lab.id_lab))
+#         result_query = await session.execute(query)
+#         laboratory_info = result_query.mappings().first()
+#         deadline = laboratory_info.deadline
+#         url_task = laboratory_info.url
+#         laboratory_name = laboratory_info.name
+#         laboratory_teach = StudentLaboratoryGet(student_laboratory_id = lab.id,
+#                                                         laboratory_name = laboratory_name,
+#                                                         student = student,
+#                                                         discipline = discipline_info,
+#                                                         deadline = deadline,
+#                                                         loading_time = lab.loading_time,
+#                                                         url_task = url_task,
+#                                                         url_student_task = lab.url,
+#                                                         status = lab.status,
+#                                                         valid = lab.valid,
+#                                                         count_try = lab.count_try)
+#         finish_laboratory.append(laboratory_teach)
+#     return finish_laboratory
 
 @router.post("/add_student_laboratory")
 async def add_student_laboratory(new_student_laboratory: Annotated[StudentLaboratoryCreate, Depends()], user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
