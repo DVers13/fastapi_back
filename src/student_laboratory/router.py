@@ -96,7 +96,7 @@ async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_use
     return finish_laboratory
 
 @router.get("/get_all_student_laboratory_for_student")
-async def get_student_laboratory_for_teacher(discipline_id: int, user_tg: User = Depends(current_user),
+async def get_student_laboratory_for_teacher(discipline_id: Query[int] = None, user_tg: User = Depends(current_user),
                                         session: AsyncSession = Depends(get_async_session)) -> list[StudentLaboratoryGet]:
     
     query = (select(student_laboratory).
