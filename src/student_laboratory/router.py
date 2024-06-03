@@ -5,7 +5,7 @@ from sqlalchemy import and_, delete, select, insert, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
-from auth.models import User, user
+from auth.models import User, user, group
 from laboratory.models import discipline_teacher, laboratory, subject, discipline
 from student_laboratory.models import student_laboratory
 from student_laboratory.schemas import DisciplineInfo, StudentInfo, StudentLaboratoryCreate, StudentLaboratoryForTeacher, StudentLaboratoryUpdate
@@ -57,10 +57,15 @@ async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_use
     finish_laboratory = []
     for lab in sorted_labs:
 
-        query = select(user.c.username).where(user.c.id == lab.id_student)
+        query = select(user.c.username, user.c.group_id).where(user.c.id == lab.id_student)
         result_query = await session.execute(query)
-        username = result_query.mappings().first()
-        student = StudentInfo(id = lab.id_student, name = username.username)
+        user_info = result_query.mappings().first()
+
+        query = select(group.c.name).where(group.c.id == user_info.group_id)
+        result_query = await session.execute(query)
+        group_name = result_query.mappings().first()
+
+        student = StudentInfo(id = lab.id_student, name = user_info.username, group = group_name.name)
 
         query = (select(subject.c.name)
                  .join(discipline, discipline.c.subject_id == subject.c.id)
@@ -69,13 +74,15 @@ async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_use
         subjectname = result_query.mappings().first()
         discipline_info = DisciplineInfo(id = lab.id_discipline, name = subjectname.name)
 
-        query = (select(laboratory.c.url, laboratory.c.deadline)
+        query = (select(laboratory.c.url, laboratory.c.deadline, laboratory.c.name)
                  .where(laboratory.c.id == lab.id_lab))
         result_query = await session.execute(query)
         laboratory_info = result_query.mappings().first()
         deadline = laboratory_info.deadline
         url_task = laboratory_info.url
+        laboratory_name = laboratory_info.name
         laboratory_teach = StudentLaboratoryForTeacher(student_laboratory_id = lab.id,
+                                                        laboratory_name = laboratory_name,
                                                         student = student,
                                                         discipline = discipline_info,
                                                         deadline = deadline,

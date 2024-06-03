@@ -15,12 +15,14 @@ class StudentLaboratoryUpdate(BaseModel):
 class StudentInfo(BaseModel):
     id: int
     name: str
+    group: str
 
 class DisciplineInfo(BaseModel):
     id: int
     name: str
 class StudentLaboratoryForTeacher(BaseModel):
     student_laboratory_id: int
+    laboratory_name: str
     student: StudentInfo
     discipline: DisciplineInfo
     deadline: datetime
