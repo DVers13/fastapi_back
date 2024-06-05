@@ -214,7 +214,8 @@ async def repeat_student_laboratory(update_data: Annotated[StudentLaboratoryUpda
 
     update_values = {
         'url': update_data.url,
-        'valid': True
+        'valid': True,
+        'id_teacher': update_data.id_teacher
     }
 
     if not valid_and_try_dict.valid:
