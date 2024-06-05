@@ -10,7 +10,7 @@ from edit_db.router import router as router_edit_db
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
-    title="Nice App"
+    title="Nice App", docs_url = "/api/doc"
 )
 
 api_router = APIRouter(prefix="/api")
@@ -27,6 +27,8 @@ api_router.include_router(
     tags=["Auth"],
 )
 
+
+####
 router = APIRouter(
     prefix="/users",
     tags=["Users"]
@@ -37,15 +39,13 @@ current_user = fastapi_users.current_user()
 @router.get("/me", response_model=UserRead)
 async def get_me(user: User = Depends(current_user)):
     return user
+####
+
 
 api_router.include_router(router)
-
 api_router.include_router(router_laboratory)
-
 api_router.include_router(router_student_laboratory)
-
 api_router.include_router(router_group_role)
-
 api_router.include_router(router_edit_db)
 
 app.include_router(api_router)
