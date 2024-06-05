@@ -9,7 +9,7 @@ from auth.router import router as router_group_role
 from edit_db.router import router as router_edit_db
 from fastapi.middleware.cors import CORSMiddleware
 
-api = FastAPI(title="Nice App",
+app = FastAPI(title="Nice App",
               description="API_DESC",
               version="0.2.0",
               docs_url='/api/docs',
