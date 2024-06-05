@@ -10,6 +10,9 @@ from laboratory.models import discipline_teacher, laboratory, subject, disciplin
 from student_laboratory.models import student_laboratory
 from student_laboratory.schemas import DisciplineInfo, StudentInfo, StudentLaboratoryCreate, StudentLaboratoryGet, StudentLaboratoryUpdate
 from auth.base_config import check_permissions, current_user
+from student_laboratory.utils import sort_labs
+
+
 router = APIRouter(
     prefix="/student_laboratory",
     tags=["student_laboratory"]
@@ -93,7 +96,7 @@ async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_use
                                                         valid = lab.valid,
                                                         count_try = lab.count_try)
         finish_laboratory.append(laboratory_teach)
-    return finish_laboratory
+    return sort_labs(finish_laboratory)
 
 @router.get("/get_all_student_laboratory_for_student")
 async def get_student_laboratory_for_teacher(discipline_id: int = Query(None), user_tg: User = Depends(current_user),
