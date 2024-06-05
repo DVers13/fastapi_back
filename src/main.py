@@ -13,15 +13,17 @@ app = FastAPI(
     title="Nice App"
 )
 
-app.include_router(
+api_router = APIRouter(prefix="/api")
+
+api_router.include_router(
     fastapi_users.get_auth_router(auth_backend),
     prefix="/auth",
     tags=["Auth"],
 )
 
-app.include_router(
+api_router.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/api/auth",
+    prefix="/auth",
     tags=["Auth"],
 )
 
@@ -36,15 +38,17 @@ current_user = fastapi_users.current_user()
 async def get_me(user: User = Depends(current_user)):
     return user
 
-app.include_router(router)
+api_router.include_router(router)
 
-app.include_router(router_laboratory)
+api_router.include_router(router_laboratory)
 
-app.include_router(router_student_laboratory)
+api_router.include_router(router_student_laboratory)
 
-app.include_router(router_group_role)
+api_router.include_router(router_group_role)
 
-app.include_router(router_edit_db)
+api_router.include_router(router_edit_db)
+
+app.include_router(api_router)
 
 origins = ["*"]
 
