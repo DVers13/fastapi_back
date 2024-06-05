@@ -26,14 +26,14 @@ router = APIRouter(
 #     result = await session.execute(query)
 #     return result.mappings().all()
 
-@router.post("/add_laboratory")
+@router.post("/add_laboratory", dependencies=[Depends(check_permissions(["add_laboratory"]))])
 async def add_laboratory(new_laboratory: LaboratoryCreate, session: AsyncSession = Depends(get_async_session)):
     stmt = insert(laboratory).values(**new_laboratory.dict())
     await session.execute(stmt)
     await session.commit()
     return {"status": "success"}
 
-@router.patch("/update_laboratory/") #, dependencies=[Depends(check_permissions(["write"]))]
+@router.patch("/update_laboratory/", dependencies=[Depends(check_permissions(["update_laboratory"]))]) #, dependencies=[Depends(check_permissions(["write"]))]
 async def update_laboratory(laboratory_id: int, update_data: LaboratoryUpdate, user_tg: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
     
     query = (select(discipline_teacher.c.teacher_id)
@@ -68,7 +68,7 @@ async def update_laboratory(laboratory_id: int, update_data: LaboratoryUpdate, u
 
     return {"status": "success"}
 
-@router.delete("/delete_laboratory_by_id")
+@router.delete("/delete_laboratory_by_id", dependencies=[Depends(check_permissions(["delete_laboratory_by_id"]))])
 async def delete_laboratory_by_id(laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
     stmt = delete(laboratory).where(laboratory.c.id == laboratory_id)
     await session.execute(stmt)
@@ -82,7 +82,7 @@ async def delete_laboratory_by_id(laboratory_id: int, session: AsyncSession = De
 #     await session.commit()
 #     return {"status": "success"}
 
-@router.post("/add_full_discipline") #, dependencies=[Depends(check_permissions(["write"]))]
+@router.post("/add_full_discipline", dependencies=[Depends(check_permissions(["add_full_discipline"]))])
 async def add_full_discipline(new_discipline: DisciplineFullCreate, session: AsyncSession = Depends(get_async_session)):
     new_discipline_dict = new_discipline.model_dump()
     group_id_list = new_discipline_dict.pop("group_id_list")
@@ -254,7 +254,7 @@ async def get_full_laboratory_for_student(id_discipline: int, user_me: User = De
         laboratory_list = laboratory_list
     )
 
-@router.patch("/update_discipline_for_teacher/")
+@router.patch("/update_discipline_for_teacher/", dependencies=[Depends(check_permissions(["update_discipline_for_teacher"]))])
 async def update_discipline_for_teacher(update_data: DisciplineUpdate_2, session: AsyncSession = Depends(get_async_session)):
     update_dict = {k: v for k, v in update_data.model_dump().items() if v is not None}
 
@@ -335,7 +335,7 @@ async def update_discipline_for_teacher(update_data: DisciplineUpdate_2, session
 #         "group_list": groups,
 #             }
 
-@router.get("/info_discipline_by_id")
+@router.get("/info_discipline_by_id", dependencies=[Depends(check_permissions(["info_discipline_by_id"]))])
 async def get_info_discipline_by_id(discipline_id: int, session: AsyncSession = Depends(get_async_session)):
 
     query = select(discipline).where(discipline.c.id == discipline_id)
@@ -387,7 +387,7 @@ async def get_info_discipline_by_id(discipline_id: int, session: AsyncSession = 
         "laboratory_list": laboratorys
             }
 
-@router.delete("/delete_discipline_by_id")
+@router.delete("/delete_discipline_by_id", dependencies=[Depends(check_permissions(["delete_discipline_by_id"]))])
 async def delete_discipline_by_id(discipline_id: int, session: AsyncSession = Depends(get_async_session)):
     stmt = delete(discipline).where(discipline.c.id == discipline_id)
     await session.execute(stmt)
