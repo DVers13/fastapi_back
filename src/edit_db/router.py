@@ -1,11 +1,11 @@
 import json
 from fastapi import APIRouter, Depends
-from sqlalchemy import delete, text
+from sqlalchemy import delete, insert, select, text, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
 from auth.models import user, role, group
 from laboratory.models import laboratory, discipline, discipline_groups, discipline_teacher, subject
-from auth.schemas import UserCreate
+from auth.schemas import GroupCreate, RoleCreate, UserCreate
 from student_laboratory.models import student_laboratory
 from auth.manager import get_user_manager
 
@@ -89,4 +89,38 @@ async def fill_data(session: AsyncSession = Depends(get_async_session), user_man
         await session.commit()
 
     
+    return {"status": "success"}
+
+@router.post("/add_group")
+async def add_group(new_group: GroupCreate, session: AsyncSession = Depends(get_async_session)):
+    stmt = insert(group).values(**new_group.dict())
+    await session.execute(stmt)
+    await session.commit()
+    return {"status": "success"}
+
+@router.post("/add_role")
+async def add_role(new_role: RoleCreate, session: AsyncSession = Depends(get_async_session)):
+    stmt = insert(role).values(**new_role.dict())
+    await session.execute(stmt)
+    await session.commit()
+    return {"status": "success"}
+
+@router.get("/get_all_users")
+async def get_all_teachers(session: AsyncSession = Depends(get_async_session)):
+    query = select(user)
+    result = await session.execute(query)
+    return result.mappings().all()
+
+@router.patch("/update_role/")
+async def update_discipline(user_id: int, role_id: int, session: AsyncSession = Depends(get_async_session)):
+    dict_update ={"role_id" : role_id}
+    stmt = (
+        update(user)
+        .where(user.c.id == user_id)
+        .values(**dict_update)
+    )
+
+    await session.execute(stmt)
+    await session.commit()
+
     return {"status": "success"}

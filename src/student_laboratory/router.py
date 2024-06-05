@@ -18,11 +18,11 @@ router = APIRouter(
     tags=["student_laboratory"]
 )
 
-@router.get("/get_student_laboratory_by_id")
-async def get_student_laboratory_by_id(student_laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
-    query = select(student_laboratory).where(student_laboratory.c.id == student_laboratory_id)
-    result = await session.execute(query)
-    return result.all()
+# @router.get("/get_student_laboratory_by_id")
+# async def get_student_laboratory_by_id(student_laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
+#     query = select(student_laboratory).where(student_laboratory.c.id == student_laboratory_id)
+#     result = await session.execute(query)
+#     return result.all()
 
 @router.get("/get_all_student_laboratory_for_teacher", dependencies=[Depends(check_permissions(["get_student_laboratory_for_teacher"]))])
 async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_user),
@@ -232,15 +232,15 @@ async def repeat_student_laboratory(update_data: Annotated[StudentLaboratoryUpda
 
     return {"status": "success"}
 
-@router.delete("/delete_student_laboratory_by_id")
-async def delete_discipline_by_id(student_laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
-    stmt = delete(student_laboratory).where(student_laboratory.c.id == student_laboratory_id)
-    await session.execute(stmt)
-    await session.commit()
-    return {"status": "success"}
+# @router.delete("/delete_student_laboratory_by_id")
+# async def delete_discipline_by_id(student_laboratory_id: int, session: AsyncSession = Depends(get_async_session)):
+#     stmt = delete(student_laboratory).where(student_laboratory.c.id == student_laboratory_id)
+#     await session.execute(stmt)
+#     await session.commit()
+#     return {"status": "success"}
 
-@router.get("/get_all_student_laboratory")
-async def get_all_subject(session: AsyncSession = Depends(get_async_session)):
-    query = select(student_laboratory)
-    result = await session.execute(query)
-    return result.mappings().all()
+# @router.get("/get_all_student_laboratory")
+# async def get_all_subject(session: AsyncSession = Depends(get_async_session)):
+#     query = select(student_laboratory)
+#     result = await session.execute(query)
+#     return result.mappings().all()
