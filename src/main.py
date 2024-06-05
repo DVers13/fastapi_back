@@ -10,7 +10,7 @@ from edit_db.router import router as router_edit_db
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
-    title="Nice App", docs_url = "/api/doc"
+    title="Nice App"
 )
 
 api_router = APIRouter(prefix="/api")
