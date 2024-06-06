@@ -59,8 +59,8 @@ async def clear_all(session: AsyncSession = Depends(get_async_session)):
 @router.post("/fill_data")
 async def fill_data(session: AsyncSession = Depends(get_async_session), user_manager = Depends(get_user_manager)):
     sql_files = [
-            'edit_db/sql_query/INSERT_INTO_role.sql',
-            'edit_db/sql_query/INSERT_INTO_group.sql']
+            'edit_db/sql_query/INSERT_INTO_Role.sql',
+            'edit_db/sql_query/INSERT_INTO_Group.sql']
     for file_path in sql_files:
         with open(file_path, 'r', encoding='utf-8') as file:
             sql_query = file.read()
