@@ -73,7 +73,18 @@ async def fill_data(session: AsyncSession = Depends(get_async_session), user_man
     for user_data in user_list:
         user_create = UserCreate(**user_data)
         await user_manager.create(user_create)
-        
+
+    dict_update ={"role_id" : 1}
+    for user_id in range(11, 19):
+        stmt = (
+            update(user)
+            .where(user.c.id == user_id)
+            .values(**dict_update)
+        )
+
+        await session.execute(stmt)
+        await session.commit()
+
     sql_files = ['edit_db/sql_query/INSERT_INTO_subject.sql',
                  'edit_db/sql_query/INSERT_INTO_discipline.sql',
                  'edit_db/sql_query/INSERT_INTO_discipline_groups.sql',
@@ -122,21 +133,5 @@ async def update_role(user_id: int, role_id: int, session: AsyncSession = Depend
 
     await session.execute(stmt)
     await session.commit()
-
-    return {"status": "success"}
-
-
-@router.patch("/update_role_easy_teacher/")
-async def update_role_easy_teacher(session: AsyncSession = Depends(get_async_session)):
-    dict_update ={"role_id" : 1}
-    for user_id in range(11, 19):
-        stmt = (
-            update(user)
-            .where(user.c.id == user_id)
-            .values(**dict_update)
-        )
-
-        await session.execute(stmt)
-        await session.commit()
 
     return {"status": "success"}
