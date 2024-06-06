@@ -44,8 +44,10 @@ async def get_student_laboratory_for_teacher(user_tg: User = Depends(current_use
     if not is_personally:
         query_without_teacher = select(student_laboratory).join(laboratory, laboratory.c.id == student_laboratory.c.id_lab).join(user, user.c.id == student_laboratory.c.id_student).where(student_laboratory.c.id_teacher.is_(None))
         query_without_teacher = query_without_teacher.where(and_(*filters))
+
         result_disciplines = await session.execute(select(discipline_teacher.c.discipline_id).where(discipline_teacher.c.teacher_id == teacher_id))
         discipline_ids = [row.discipline_id for row in result_disciplines]
+
         query_without_teacher = query_without_teacher.where(laboratory.c.discipline_id.in_(discipline_ids))
         result_without_teacher = await session.execute(query_without_teacher)
         labs_without_teacher = result_without_teacher.mappings().all()
@@ -112,14 +114,13 @@ async def get_student_laboratory_for_teacher(discipline_id: int = Query(None), u
     labs = result.mappings().all()
     sorted_labs = sorted(labs, key=lambda lab: lab['id'])
     finish_laboratory = []
+    
+    query = select(group.c.name).where(group.c.id == user_tg.group_id)
+    result_query = await session.execute(query)
+    group_name = result_query.mappings().first()
+
+    student = StudentInfo(id = user_tg.id, name = user_tg.username, group = group_name.name)
     for lab in sorted_labs:
-
-        query = select(group.c.name).where(group.c.id == user_tg.group_id)
-        result_query = await session.execute(query)
-        group_name = result_query.mappings().first()
-
-        student = StudentInfo(id = user_tg.id, name = user_tg.username, group = group_name.name)
-
         query = (select(subject.c.name)
                  .join(discipline, discipline.c.subject_id == subject.c.id)
                  .where(discipline.c.id == lab.id_discipline))
