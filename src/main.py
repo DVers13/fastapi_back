@@ -1,4 +1,5 @@
 from fastapi import APIRouter, FastAPI, Depends
+import uvicorn
 
 from auth.base_config import auth_backend, fastapi_users
 from auth.schemas import UserRead, UserCreate
@@ -62,3 +63,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+if __name__ == '__main__':
+    uvicorn.run('main:app')

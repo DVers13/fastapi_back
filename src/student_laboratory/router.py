@@ -154,7 +154,6 @@ async def add_student_laboratory(new_student_laboratory: Annotated[StudentLabora
     query = (select(student_laboratory.c.id_lab).where(student_laboratory.c.id_student == user.id))
     result = await session.execute(query)
     result_dict = result.mappings().all()
-    print(result_dict)
     id_labs_valid = [lab.id_lab for lab in result_dict]
 
     if new_student_laboratory.id_lab in id_labs_valid:
