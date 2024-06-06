@@ -59,8 +59,8 @@ async def clear_all(session: AsyncSession = Depends(get_async_session)):
 @router.post("/fill_data")
 async def fill_data(session: AsyncSession = Depends(get_async_session), user_manager = Depends(get_user_manager)):
     sql_files = [
-            'edit_db/sql_query/INSERT_INTO_Role.sql',
-            'edit_db/sql_query/INSERT_INTO_Group.sql']
+            'edit_db/sql_query/INSERT_INTO_role.sql',
+            'edit_db/sql_query/INSERT_INTO_group.sql']
     for file_path in sql_files:
         with open(file_path, 'r', encoding='utf-8') as file:
             sql_query = file.read()
@@ -79,7 +79,7 @@ async def fill_data(session: AsyncSession = Depends(get_async_session), user_man
                  'edit_db/sql_query/INSERT_INTO_discipline_groups.sql',
                 'edit_db/sql_query/INSERT_INTO_discipline_teacher.sql',
                 'edit_db/sql_query/INSERT_INTO_laboratory.sql',
-                'edit_db/sql_query/INSERT_INTO_student_labs.sql',
+                'edit_db/sql_query/INSERT_INTO_student_laboratory.sql',
                 ]
     for file_path in sql_files:
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -112,7 +112,7 @@ async def get_all_teachers(session: AsyncSession = Depends(get_async_session)):
     return result.mappings().all()
 
 @router.patch("/update_role/")
-async def update_discipline(user_id: int, role_id: int, session: AsyncSession = Depends(get_async_session)):
+async def update_role(user_id: int, role_id: int, session: AsyncSession = Depends(get_async_session)):
     dict_update ={"role_id" : role_id}
     stmt = (
         update(user)
@@ -122,5 +122,21 @@ async def update_discipline(user_id: int, role_id: int, session: AsyncSession = 
 
     await session.execute(stmt)
     await session.commit()
+
+    return {"status": "success"}
+
+
+@router.patch("/update_role_easy_teacher/")
+async def update_role_easy_teacher(session: AsyncSession = Depends(get_async_session)):
+    dict_update ={"role_id" : 1}
+    for user_id in range(11, 19):
+        stmt = (
+            update(user)
+            .where(user.c.id == user_id)
+            .values(**dict_update)
+        )
+
+        await session.execute(stmt)
+        await session.commit()
 
     return {"status": "success"}

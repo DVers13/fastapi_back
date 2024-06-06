@@ -106,8 +106,7 @@
         "is_superuser": true, 
         "is_verified": true, 
         "username": "Ivan Sharun", 
-        "role_id": 1, 
-        "group_id": 1
+        "role_id": 1
     },
     {
         "email": "etyumentcev@gmail.com", 
@@ -116,7 +115,61 @@
         "is_superuser": true, 
         "is_verified": true, 
         "username": "Евгений Тюменцев", 
-        "role_id": 1, 
-        "group_id": 1
+        "role_id": 1
+    },
+    {
+        "email": "m.gunenkov@gmail.com", 
+        "password": "b1lgq8CZObtdLjP2", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_verified": true, 
+        "username": "Михаил Гуненков", 
+        "role_id": 1 
+    },
+    {
+        "email": "onikaneva@gmail.com", 
+        "password": "nsUsMuVighls5X58", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_verified": true, 
+        "username": "Ольга Канева", 
+        "role_id": 1 
+    },
+    {
+        "email": "igrig64@mail.ru", 
+        "password": "e6qBoILiZU70d3Ha", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_verified": true, 
+        "username": "Ирина Федотова", 
+        "role_id": 1 
+    },
+    {
+        "email": "roman_154_@gmail.com", 
+        "password": "UaxWYhQRpAlvrdgs", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_verified": true, 
+        "username": "Роман Козинец", 
+        "role_id": 1 
+    },
+    {
+        "email": "munkosn94@gmail.com", 
+        "password": "0jDYcVDSw9O7qtPM", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_verified": true, 
+        "username": "Сергей Мунько", 
+        "role_id": 1 
+    },
+    {
+        "email": "viktoriamunko@gmail.com", 
+        "password": "iMzdlIdUbj5KrtKe", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_verified": true, 
+        "username": "Виктория Мунько", 
+        "role_id": 1 
     }
+
 ]
